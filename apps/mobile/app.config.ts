@@ -2,6 +2,7 @@ import type { ExpoConfig } from "expo/config";
 
 import { BRAND_ASSET_PATHS } from "../../scripts/lib/brand-assets.ts";
 import { loadRepoEnv } from "../../scripts/lib/public-config.ts";
+import { harnessInfoPlist, harnessPlugins } from "./harness/config.ts";
 
 type AppVariant = "development" | "preview" | "production";
 
@@ -10,6 +11,10 @@ Object.assign(process.env, repoEnv);
 
 const APP_VARIANT = resolveAppVariant(repoEnv.APP_VARIANT);
 const isIosPersonalTeamBuild = repoEnv.T3CODE_IOS_PERSONAL_TEAM === "1";
+// Opt-in harness build: bakes the kitchen-sink capability set (see
+// ./harness/manifest.ts) into the dev client so external Expo projects can
+// load inside it. Off by default; a build without the flag is stock T3 Code.
+const isHarnessBuild = repoEnv.T3CODE_HARNESS === "1";
 const runtimeVersionPolicy =
   process.env.MOBILE_VERSION_POLICY ??
   (APP_VARIANT === "development" ? "appVersion" : "fingerprint");
@@ -220,6 +225,7 @@ const config: ExpoConfig = {
             ],
           }
         : {}),
+      ...(isHarnessBuild ? harnessInfoPlist : {}),
     },
   },
   android: {
@@ -344,11 +350,13 @@ const config: ExpoConfig = {
     "./plugins/withAndroidModernAlertDialog.cjs",
     "./plugins/withAndroidPredictiveBackCompat.cjs",
     "./plugins/withAndroidTabletOrientation.cjs",
+    ...(isHarnessBuild ? harnessPlugins : []),
     ...(isIosPersonalTeamBuild ? ["./plugins/withoutIosPersonalTeamCapabilities.cjs"] : []),
   ],
   extra: {
     appVariant: APP_VARIANT,
     iosPersonalTeamBuild: isIosPersonalTeamBuild,
+    harnessBuild: isHarnessBuild,
     relay: {
       url: repoEnv.T3CODE_RELAY_URL ?? null,
     },
