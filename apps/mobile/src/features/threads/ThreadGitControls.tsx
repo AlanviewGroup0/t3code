@@ -15,6 +15,7 @@ import { NativeHeaderToolbar } from "../../native/StackHeader";
 import { useCallback, useMemo } from "react";
 import { Alert } from "react-native";
 import { tryOpenExternalUrl } from "../../lib/openExternalUrl";
+import { useHarnessPreviewHeaderItem } from "../../harness/useHarnessPreviewHeaderItem";
 import {
   basename,
   getTerminalStatusLabel,
@@ -392,17 +393,31 @@ function useThreadGitHeaderActionItems(props: ThreadGitControlsProps): ThreadGit
 
 export function useThreadGitRightHeaderItems(props: ThreadGitControlsProps): HeaderItems {
   const actionItems = useThreadGitHeaderActionItems(props);
+  const harnessPreviewItem = useHarnessPreviewHeaderItem();
   return useMemo(
-    () => [actionItems.git, actionItems.files, actionItems.terminal] as HeaderItems,
-    [actionItems],
+    () =>
+      [
+        ...(harnessPreviewItem ? [harnessPreviewItem] : []),
+        actionItems.git,
+        actionItems.files,
+        actionItems.terminal,
+      ] as HeaderItems,
+    [actionItems, harnessPreviewItem],
   );
 }
 
 export function useThreadGitCenterHeaderItems(props: ThreadGitControlsProps): HeaderItems {
   const actionItems = useThreadGitHeaderActionItems(props);
+  const harnessPreviewItem = useHarnessPreviewHeaderItem();
   return useMemo(
-    () => [actionItems.files, actionItems.git, actionItems.terminal] as HeaderItems,
-    [actionItems],
+    () =>
+      [
+        ...(harnessPreviewItem ? [harnessPreviewItem] : []),
+        actionItems.files,
+        actionItems.git,
+        actionItems.terminal,
+      ] as HeaderItems,
+    [actionItems, harnessPreviewItem],
   );
 }
 

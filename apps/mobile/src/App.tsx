@@ -17,6 +17,7 @@ import {
   AppearancePreferencesProvider,
   useAppearancePreferences,
 } from "./features/settings/appearance/AppearancePreferencesProvider";
+import { hideBackToEditorOverlay } from "./harness/overlay";
 import { RootStack } from "./Stack";
 import { appAtomRegistry } from "./state/atom-registry";
 import { OverlayPortalHost } from "./components/OverlayPortal";
@@ -51,7 +52,12 @@ function SplashScreenCoordinator() {
   const { isReady } = useAppearancePreferences();
 
   useEffect(() => {
-    if (isReady) void SplashScreen.hide();
+    if (isReady) {
+      void SplashScreen.hide();
+      // Returning from a harness preview re-mounts the editor bundle; drop
+      // the native Back to Editor overlay once the editor is visible again.
+      hideBackToEditorOverlay();
+    }
   }, [isReady]);
 
   return null;
