@@ -103,4 +103,24 @@ export const HARNESS_CAPABILITIES: ReadonlyArray<HarnessCapability> = [
     ],
   },
   { id: "screen-orientation", module: "expo-screen-orientation" },
+  // ---- Exotic (non-first-party) capabilities added via the harness-add flow ----
+  {
+    id: "stripe",
+    module: "@stripe/stripe-react-native",
+    plugin: ["@stripe/stripe-react-native", { enableGooglePay: false }],
+  },
+  {
+    id: "google-signin",
+    module: "@react-native-google-signin/google-signin",
+    // App-specific: the URL scheme belongs to the previewed app's OAuth client.
+    plugin: [
+      "@react-native-google-signin/google-signin",
+      { iosUrlScheme: "com.googleusercontent.apps.618461935267-rfurcgk08ti4nrki5j6inm5e52d80hkp" },
+    ],
+  },
+  { id: "skia", module: "@shopify/react-native-skia" },
+  { id: "async-storage", module: "@react-native-async-storage/async-storage" },
+  { id: "linear-gradient", module: "expo-linear-gradient" },
+  { id: "apple-authentication", module: "expo-apple-authentication" },
+  { id: "status-bar", module: "expo-status-bar" },
 ] as const;
