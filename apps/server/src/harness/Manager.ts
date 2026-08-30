@@ -213,7 +213,10 @@ export const make = Effect.gen(function* HarnessPreviewManagerMake() {
           {
             cwd,
             detached: hostPlatform !== "win32",
-            env: { CI: "1", EXPO_NO_TELEMETRY: "1" },
+            // T3CODE_HARNESS_PREVIEW lets a project's metro.config detect it
+            // is being bundled for the harness (e.g. to stub out native
+            // modules the harness does not compile in, like Firebase).
+            env: { CI: "1", EXPO_NO_TELEMETRY: "1", T3CODE_HARNESS_PREVIEW: "1" },
             extendEnv: true,
           },
         ),
