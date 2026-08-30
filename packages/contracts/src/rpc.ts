@@ -158,6 +158,14 @@ import {
   PreviewSessionSnapshot,
 } from "./preview.ts";
 import {
+  HarnessPreviewError,
+  HarnessPreviewListInput,
+  HarnessPreviewListResult,
+  HarnessPreviewStartInput,
+  HarnessPreviewServerSnapshot,
+  HarnessPreviewStopInput,
+} from "./harnessPreview.ts";
+import {
   PreviewAutomationError,
   PreviewAutomationHost,
   PreviewAutomationHostFocus,
@@ -258,6 +266,9 @@ export const WS_METHODS = {
   terminalClose: "terminal.close",
 
   // Preview methods
+  harnessPreviewStart: "harnessPreview.start",
+  harnessPreviewStop: "harnessPreview.stop",
+  harnessPreviewList: "harnessPreview.list",
   previewOpen: "preview.open",
   previewNavigate: "preview.navigate",
   previewResize: "preview.resize",
@@ -828,6 +839,23 @@ export const WsTerminalCloseRpc = Rpc.make(WS_METHODS.terminalClose, {
   error: Schema.Union([TerminalError, EnvironmentAuthorizationError]),
 });
 
+export const WsHarnessPreviewStartRpc = Rpc.make(WS_METHODS.harnessPreviewStart, {
+  payload: HarnessPreviewStartInput,
+  success: HarnessPreviewServerSnapshot,
+  error: Schema.Union([HarnessPreviewError, EnvironmentAuthorizationError]),
+});
+
+export const WsHarnessPreviewStopRpc = Rpc.make(WS_METHODS.harnessPreviewStop, {
+  payload: HarnessPreviewStopInput,
+  error: Schema.Union([HarnessPreviewError, EnvironmentAuthorizationError]),
+});
+
+export const WsHarnessPreviewListRpc = Rpc.make(WS_METHODS.harnessPreviewList, {
+  payload: HarnessPreviewListInput,
+  success: HarnessPreviewListResult,
+  error: EnvironmentAuthorizationError,
+});
+
 export const WsPreviewOpenRpc = Rpc.make(WS_METHODS.previewOpen, {
   payload: PreviewOpenInput,
   success: PreviewSessionSnapshot,
@@ -1109,6 +1137,9 @@ export const WsRpcGroup = RpcGroup.make(
   WsPreviewResizeRpc,
   WsPreviewRefreshRpc,
   WsPreviewCloseRpc,
+  WsHarnessPreviewStartRpc,
+  WsHarnessPreviewStopRpc,
+  WsHarnessPreviewListRpc,
   WsPreviewListRpc,
   WsPreviewReportStatusRpc,
   WsPreviewAutomationConnectRpc,

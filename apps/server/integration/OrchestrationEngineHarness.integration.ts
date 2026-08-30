@@ -83,6 +83,7 @@ import { VcsStatusBroadcaster } from "../src/vcs/VcsStatusBroadcaster.ts";
 import { GitWorkflowService } from "../src/git/GitWorkflowService.ts";
 import * as VcsProcess from "../src/vcs/VcsProcess.ts";
 import * as AgentAwarenessRelay from "../src/relay/AgentAwarenessRelay.ts";
+import { HarnessPreviewManager } from "../src/harness/Manager.ts";
 
 const decodeCodexSettings = Schema.decodeEffect(CodexSettings);
 
@@ -379,6 +380,15 @@ export const makeOrchestrationIntegrationHarness = (
       Layer.provideMerge(
         Layer.succeed(AgentAwarenessRelay.AgentAwarenessRelay, {
           publishThread: () => Effect.void,
+          start: () => Effect.void,
+        }),
+      ),
+      Layer.provideMerge(
+        Layer.succeed(HarnessPreviewManager, {
+          startServer: () =>
+            Effect.die("harness preview is not available in the integration harness"),
+          stopServer: () => Effect.void,
+          list: () => Effect.succeed({ servers: [] }),
           start: () => Effect.void,
         }),
       ),

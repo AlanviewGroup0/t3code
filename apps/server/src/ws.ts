@@ -102,6 +102,7 @@ import * as ServerSettings from "./serverSettings.ts";
 import * as TerminalManager from "./terminal/Manager.ts";
 import * as PreviewAutomationBroker from "./mcp/PreviewAutomationBroker.ts";
 import * as PreviewManager from "./preview/Manager.ts";
+import { HarnessPreviewManager } from "./harness/Manager.ts";
 import { issueAssetUrl } from "./assets/AssetAccess.ts";
 import { deletePendingAttachment, issueAttachmentUploadUrl } from "./assets/AttachmentUpload.ts";
 import * as PortScanner from "./preview/PortScanner.ts";
@@ -502,6 +503,7 @@ const makeWsRpcLayer = (
       const vcsStatusBroadcaster = yield* VcsStatusBroadcaster.VcsStatusBroadcaster;
       const terminalManager = yield* TerminalManager.TerminalManager;
       const previewManager = yield* PreviewManager.PreviewManager;
+      const harnessPreviewManager = yield* HarnessPreviewManager;
       const portDiscovery = yield* PortScanner.PortDiscovery;
       const providerRegistry = yield* ProviderRegistry.ProviderRegistry;
       const providerService = yield* ProviderService.ProviderService;
@@ -2319,6 +2321,22 @@ const makeWsRpcLayer = (
         [WS_METHODS.previewClose]: (input) =>
           observeRpcEffect(WS_METHODS.previewClose, previewManager.close(input), {
             "rpc.aggregate": "preview",
+          }),
+        [WS_METHODS.harnessPreviewStart]: (input) =>
+          observeRpcEffect(
+            WS_METHODS.harnessPreviewStart,
+            harnessPreviewManager.startServer(input),
+            {
+              "rpc.aggregate": "harness",
+            },
+          ),
+        [WS_METHODS.harnessPreviewStop]: (input) =>
+          observeRpcEffect(WS_METHODS.harnessPreviewStop, harnessPreviewManager.stopServer(input), {
+            "rpc.aggregate": "harness",
+          }),
+        [WS_METHODS.harnessPreviewList]: (input) =>
+          observeRpcEffect(WS_METHODS.harnessPreviewList, harnessPreviewManager.list(input), {
+            "rpc.aggregate": "harness",
           }),
         [WS_METHODS.previewList]: (input) =>
           observeRpcEffect(WS_METHODS.previewList, previewManager.list(input), {

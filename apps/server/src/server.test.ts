@@ -131,6 +131,7 @@ import * as ServiceLauncherClient from "./cloud/serviceLauncherClient.ts";
 import * as ServerSettings from "./serverSettings.ts";
 import * as TerminalManager from "./terminal/Manager.ts";
 import * as PreviewManager from "./preview/Manager.ts";
+import { HarnessPreviewManager } from "./harness/Manager.ts";
 import * as PortScanner from "./preview/PortScanner.ts";
 import * as BrowserTraceCollector from "./observability/BrowserTraceCollector.ts";
 import * as ProjectFaviconResolver from "./project/ProjectFaviconResolver.ts";
@@ -788,6 +789,12 @@ const buildAppUnderTest = (options?: {
             subscribeEvents: Effect.flatMap(PubSub.unbounded<PreviewEvent>(), (pubsub) =>
               PubSub.subscribe(pubsub),
             ),
+          }),
+          Layer.mock(HarnessPreviewManager)({
+            startServer: () => Effect.die("HarnessPreviewManager not stubbed in this test"),
+            stopServer: () => Effect.void,
+            list: () => Effect.succeed({ servers: [] }),
+            start: () => Effect.void,
           }),
           Layer.mock(PortScanner.PortDiscovery)({
             scan: () => Effect.succeed([]),

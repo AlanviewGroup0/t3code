@@ -12,6 +12,7 @@ import { ThreadDeletionReactor } from "../Services/ThreadDeletionReactor.ts";
 import { OrchestrationReactor } from "../Services/OrchestrationReactor.ts";
 import { makeOrchestrationReactor } from "./OrchestrationReactor.ts";
 import * as AgentAwarenessRelay from "../../relay/AgentAwarenessRelay.ts";
+import { HarnessPreviewManager } from "../../harness/Manager.ts";
 
 describe("OrchestrationReactor", () => {
   let runtime: ManagedRuntime.ManagedRuntime<OrchestrationReactor, never> | null = null;
@@ -73,6 +74,17 @@ describe("OrchestrationReactor", () => {
             },
           }),
         ),
+        Layer.provideMerge(
+          Layer.succeed(HarnessPreviewManager, {
+            startServer: () => Effect.die("not under test"),
+            stopServer: () => Effect.void,
+            list: () => Effect.succeed({ servers: [] }),
+            start: () => {
+              started.push("harness-preview-manager");
+              return Effect.void;
+            },
+          }),
+        ),
       ),
     );
 
@@ -86,6 +98,7 @@ describe("OrchestrationReactor", () => {
       "checkpoint-reactor",
       "thread-deletion-reactor",
       "agent-awareness-relay",
+      "harness-preview-manager",
     ]);
 
     await Effect.runPromise(Scope.close(scope, Exit.void));
