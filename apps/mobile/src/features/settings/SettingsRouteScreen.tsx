@@ -42,6 +42,7 @@ import {
   runAppUpdateCheck,
 } from "../updates/app-updates";
 import { useSavedRemoteConnections } from "../../state/use-remote-environment-registry";
+import { HarnessSettingsSection } from "../../harness/HarnessSettingsSection";
 import { SettingsRow } from "./components/SettingsRow";
 import { SettingsSection } from "./components/SettingsSection";
 import { SettingsSwitchRow } from "./components/SettingsSwitchRow";
@@ -123,6 +124,8 @@ function LocalSettingsRouteScreen() {
             target="SettingsEnvironments"
           />
         </SettingsSection>
+
+        <HarnessSettingsSection />
 
         <GeneralSettingsSection />
 
@@ -509,6 +512,8 @@ function ConfiguredSettingsRouteScreen() {
             onValueChange={handleLiveActivitiesChange}
           />
         </SettingsSection>
+
+        <HarnessSettingsSection />
 
         <GeneralSettingsSection />
 
